@@ -9,6 +9,6 @@ pip3 install --upgrade pip
 pip3 install questionary psutil rich
 
 # Jalankan script utama
-curl -s https://raw.githubusercontent.com/username/repo/main/system.py -o ~/start.py
+curl -s https://raw.githubusercontent.com/Dikatoki969/EASETUP-TOOLS/refs/heads/main/start.py -o ~/start.py
 echo "Selesai! Jalankan dengan: python3 ~/start.py"
 python3 ~/start.py
