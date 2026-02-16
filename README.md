@@ -1,2 +1,2 @@
-# EASETUP-TOOLS
-Script untuk setup VPS dan server. Install modul penting, game server, panel, optimisasi sistem, dan tools keamanan dengan cepat dan mudah via terminal.
+## USE IN LINUX
+```bash <(curl -s https://raw.githubusercontent.com/Dikatoki969/EASETUP-TOOLS/refs/heads/main/install.sh)```
