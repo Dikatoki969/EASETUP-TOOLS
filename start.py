@@ -36,7 +36,6 @@ def banner():
 
     # Panel utama
     panel_text = Text()
-    panel_text.append(f"Creator : dikatoki\n", style="bold yellow")
     panel_text.append(f"Device  : {platform.node()} ({platform.system()} {platform.release()})\n", style="white")
     panel_text.append(f"CPU     : {cpu}\n", style="white")
     panel_text.append(f"RAM     : {ram}\n", style="white")
@@ -57,7 +56,6 @@ def banner():
     # Pesan peringatan di bawah panel
     warning = Text()
     warning.append("⚠ Gunakan tools ini dengan bijak. \n", style="bold red")
-    warning.append("    Jangan disalahgunakan untuk aktivitas ilegal atau merusak sistem.\n", style="yellow")
     warning.append("💡 Selalu backup data penting sebelum melakukan perubahan.\n", style="green")
     console.print(Align.center(warning))
 
@@ -181,7 +179,6 @@ echo
 border $RED    "╔════════════════════════════════════════════════════╗"
 border $ORANGE "║         E A S E T U P - S E R V E R"
 border $YELLOW "╠════════════════════════════════════════════════════╣"
-echo -e "${GREEN}║ Creator      : ${RESET}dikatoki"
 echo -e "${GREEN}║ Blog         : ${RESET}https://dikatoki969.github.io/Dikatoki969"
 echo -e "${GREEN}║ Hostname     : ${RESET}$HOSTNAME"
 echo -e "${GREEN}║ OS           : ${RESET}$OS_NAME"
