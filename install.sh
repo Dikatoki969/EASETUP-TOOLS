@@ -1,14 +1,5 @@
 #!/bin/bash
 
-# EASETUP TOOLS - Professional VPS Installer & Management System
-# Author: V0
-# Version: 2.0
-# Features: Hosting, Optimization, Monitoring, Security, Installer, Dashboard
-
-# ============================================================================
-# NEON CYAN COLOR SCHEME
-# ============================================================================
-
 NEON_CYAN='\033[38;5;51m'
 NEON_BLUE='\033[38;5;33m'
 NEON_MAGENTA='\033[38;5;201m'
