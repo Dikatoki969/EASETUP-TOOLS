@@ -79,7 +79,8 @@ print_box() {
     local width=55
     local padding=$(( (width - ${#title}) / 2 ))
     echo -e "${NEON_BLUE}┌$(printf '─%.0s' {1..55})┐${NC}"
-    printf "${NEON_BLUE}│${NC}%*s${title}%*s${NEON_BLUE}│${NC}\n" $padding "" $((width - padding - ${#title}))
+printf "${NEON_BLUE}│${NC}%*s%s%*s${NEON_BLUE}│${NC}\n" \
+"$padding" "" "$title" "$((width - padding - ${#title}))" ""
     echo -e "${NEON_BLUE}└$(printf '─%.0s' {1..55})┘${NC}"
 }
 
@@ -187,7 +188,7 @@ show_banner() {
     cat << "EOF"
 ╔════════════════════════════════════════════════════════════╗
 ║                                                            ║
-║       ◆ EASETUP TOOLS - Enterprise Server Installer ◆      ║
+║       ◆ EASETUP TOOLS - Enterprise Server Installer ◆       ║
 ║                   VPS Management Tools                     ║
 ║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
@@ -445,7 +446,7 @@ minecraft_menu() {
 pterodactyl_install() {
     log_info "Installing Pterodactyl Panel..."
     if confirm "Continue with Pterodactyl installation?"; then
-        bash <(curl -s https://pterodactyl-installer.se) &
+        bash <(curl -s https://pterodactyl-installer.se)
     fi
 }
 
@@ -636,7 +637,6 @@ opt_update() {
     spinner "Updating package lists"
     wait
     apt-get upgrade -y > /dev/null 2>&1 &
-    spinner "Upgrading packages"
     wait
     apt-get autoremove -y > /dev/null 2>&1
     log_success "System updated successfully"
@@ -700,7 +700,8 @@ opt_bbr() {
 
 opt_theme() {
     log_info "Updating login theme..."
-    apt install fastfetch -y >/dev/null 2>&1
+wget -q https://github.com/fastfetch-cli/fastfetch/releases/latest/download/fastfetch-linux-amd64.deb -O /tmp/fastfetch.deb
+dpkg -i /tmp/fastfetch.deb >/dev/null 2>&1
     # Hapus MOTD & banner bawaan
     > /etc/motd
     chmod -x /etc/update-motd.d/* 2>/dev/null
