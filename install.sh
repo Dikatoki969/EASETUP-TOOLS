@@ -446,6 +446,7 @@ pterodactyl_install() {
     log_info "Installing Pterodactyl Panel..."
     if confirm "Continue with Pterodactyl installation?"; then
         bash <(curl -s https://pterodactyl-installer.se) &
+    fi
 }
 
 nginx_install() {
