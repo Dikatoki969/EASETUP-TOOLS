@@ -1,6 +1,7 @@
 #!/bin/bash
 echo "Selamat datang di installer Easetup!"
 echo "Update & Install dependency..."
+apt upgrade -y 
 apt update -y && apt install curl git -y
 apt update -y && apt install python3 python3-pip -y
 pip3 install --upgrade pip
