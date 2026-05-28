@@ -1083,7 +1083,8 @@ inst_menu() {
 # ============================================================================
 
 util_hostname() {
-    read -p "$(echo -e ${NEON_CYAN}Enter new hostname:${NC} )" new_hostname
+    echo -ne "${NEON_CYAN}Enter new hostname:${NC} "
+    read new_hostname
     hostnamectl set-hostname "$new_hostname" &
     spinner "Changing hostname"
     wait
@@ -1092,7 +1093,8 @@ util_hostname() {
 }
 
 util_dns() {
-    read -p "$(echo -e ${NEON_CYAN}Enter DNS IP (e.g., 8.8.8.8):${NC} )" dns_ip
+    echo -ne "${NEON_CYAN}Enter DNS IP (e.g., 8.8.8.8):${NC} "
+    read dns_ip
     cat > /etc/resolv.conf << EOF
 nameserver $dns_ip
 EOF
