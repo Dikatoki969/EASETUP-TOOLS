@@ -717,7 +717,7 @@ opt_theme() {
     cat > /etc/profile.d/welcome.sh << 'EOF'
 #!/bin/bash
 clear
-echo "Welcome back, $(whoami)"
+echo "Welcome back"
 echo
 fastfetch
 EOF
