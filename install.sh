@@ -563,8 +563,8 @@ opt_theme() {
     log_info "Updating login theme..."
     cat > /etc/motd << 'MOTD'
 ╔════════════════════════════════════════════════════════════╗
-║     ◆ EASETUP TOOLS - Enterprise Server Installer ◆      ║
-║        Welcome to Professional VPS Management Suite        ║
+║      ◆ EASETUP TOOLS - Enterprise Server Installer ◆      ║
+║              Welcome to VPS Management Tool                ║
 ╚════════════════════════════════════════════════════════════╝
 MOTD
     log_success "Login theme updated"
