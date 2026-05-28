@@ -1,7 +1,7 @@
 # 🚀 EASETUP TOOLS
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-1.0-blue?style=for-the-badge">
+  <img src="https://img.shields.io/badge/version-1.4-blue?style=for-the-badge">
   <img src="https://img.shields.io/badge/platform-Debian%20%7C%20Ubuntu-green?style=for-the-badge">
   <img src="https://img.shields.io/badge/bash-script-orange?style=for-the-badge">
 </p>
