@@ -110,7 +110,7 @@ curl -s https://raw.githubusercontent.com/Dikatoki969/EASETUP-TOOLS/main/install
 ---
 
 # 📸 SCREENSHOT
-![image]("./Screenshot 2026-05-28 135421.png")
+![image](Screenshot 2026-05-28 135421.png)
 
 ```text
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
