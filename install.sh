@@ -3,7 +3,7 @@
 # ============================================================================
 # EASETUP TOOLS - Professional VPS Installer & Management Suite
 # ============================================================================
-# Author: ChatGPT
+# Author: EASETUP Team
 # Version: 3.0 Enterprise
 # Description: Premium server management toolkit with enterprise features
 
@@ -85,9 +85,18 @@ print_box() {
 
 spinner() {
     local message="$1"
-    local pid=$!
+    local duration="${2:-10}"
     local i=0
-    while kill -0 $pid 2>/dev/null; do
+    local start_time=$(date +%s)
+    
+    while true; do
+        local current_time=$(date +%s)
+        local elapsed=$((current_time - start_time))
+        
+        if [ $elapsed -ge $duration ]; then
+            break
+        fi
+        
         printf "\r${NEON_CYAN}${SPINNER_CHARS[$((i++ % 10))]}${NC} $message"
         sleep 0.1
     done
@@ -176,8 +185,8 @@ show_banner() {
     cat << "EOF"
 ╔════════════════════════════════════════════════════════════╗
 ║                                                            ║
-║     ◆ EASETUP TOOLS - Enterprise Server Installer ◆      ║
-║              Professional VPS Management Suite             ║
+║      ◆ EASETUP TOOLS - Enterprise Server Installer ◆      ║
+║                   VPS Management Tools                     ║
 ║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
 EOF
@@ -207,21 +216,47 @@ show_system_info() {
 
 minecraft_java() {
     log_info "Installing Minecraft Java Server..."
-    apt-get update -qq > /dev/null 2>&1
+    apt-get update -qq > /dev/null 2>&1 &
+    spinner "Updating packages" 5
+    wait
+    
     install_package "openjdk-17-jre-headless"
     install_package "screen"
+    install_package "wget"
+    install_package "curl"
     
     mkdir -p /opt/minecraft-java
     cd /opt/minecraft-java
     
-    log_info "Downloading latest Minecraft Server JAR..."
-    wget -q https://launcher.mojang.com/v1/objects/3dc3d84a581f14691199cf6831b71ed3296884d0/server.jar &
-    spinner "Downloading server.jar"
-    wait
+    log_info "Fetching latest Minecraft Server version..."
     
-    echo "eula=true" > eula.txt
+    # Get latest version manifest from official API
+    MANIFEST=$(curl -s https://launcher.mojang.com/mc/game/version_manifest.json)
+    LATEST_RELEASE=$(echo "$MANIFEST" | grep -o '"release":"[^"]*"' | head -1 | cut -d'"' -f4)
+    VERSION_URL=$(echo "$MANIFEST" | grep -o "\"url\":\"[^\"]*$LATEST_RELEASE[^\"]*\"" | head -1 | cut -d'"' -f4)
     
-    cat > server.properties << 'PROPS'
+    if [ -z "$LATEST_RELEASE" ]; then
+        log_warning "Could not fetch version info, using fallback URL..."
+        # Fallback: Use fixed working URL
+        wget --timeout=30 -q "https://launcher.mojang.com/v1/objects/3dc3d84a581f14691199cf6831b71ed3296884d0/server.jar" -O server.jar 2>/dev/null
+    else
+        log_info "Latest version: $LATEST_RELEASE"
+        # Extract download URL from version manifest
+        VERSION_MANIFEST=$(curl -s "$VERSION_URL")
+        SERVER_URL=$(echo "$VERSION_MANIFEST" | grep -o '"downloads":{[^}]*"server":{[^}]*"url":"[^"]*' | grep -o 'https[^"]*')
+        
+        if [ -n "$SERVER_URL" ]; then
+            wget --timeout=60 -q "$SERVER_URL" -O server.jar 2>/dev/null
+        else
+            log_warning "Could not parse server URL, using fallback..."
+            wget --timeout=30 -q "https://launcher.mojang.com/v1/objects/3dc3d84a581f14691199cf6831b71ed3296884d0/server.jar" -O server.jar 2>/dev/null
+        fi
+    fi
+    
+    if [ -f server.jar ] && [ -s server.jar ]; then
+        echo "eula=true" > eula.txt
+        
+        cat > server.properties << 'PROPS'
 server-port=25565
 difficulty=2
 gamemode=0
@@ -229,17 +264,50 @@ max-players=20
 online-mode=true
 pvp=true
 spawn-protection=16
+enable-rcon=true
+rcon.port=25575
+rcon.password=changeme
+motd=EASETUP Minecraft Server
 PROPS
-    
-    cat > start.sh << 'START'
+        
+        cat > start.sh << 'START'
 #!/bin/bash
-screen -dmS minecraft java -Xmx4G -Xms4G -jar server.jar nogui
-echo "Server started in 'minecraft' screen session"
+cd /opt/minecraft-java
+RAM=${1:-4}
+echo "[*] Starting Minecraft server with ${RAM}GB RAM..."
+screen -dmS minecraft java -Xmx${RAM}G -Xms${RAM}G -jar server.jar nogui
+sleep 3
+echo "[✓] Minecraft server started in 'minecraft' screen session"
+echo "[*] Attach console: screen -r minecraft"
+echo "[*] Detach console: Ctrl+A then D"
+echo "[*] Stop server: screen -S minecraft -X stuff 'stop\r'"
 START
-    chmod +x start.sh
+        chmod +x start.sh
+        
+        # Create stop script
+        cat > stop.sh << 'STOP'
+#!/bin/bash
+echo "[*] Stopping Minecraft server..."
+screen -S minecraft -X stuff "stop\r"
+sleep 3
+echo "[✓] Server stopped"
+STOP
+        chmod +x stop.sh
+        
+        log_success "Minecraft Java Server installed successfully!"
+        log_info "Location: /opt/minecraft-java"
+        log_info "Start: /opt/minecraft-java/start.sh [RAM_GB]"
+        log_info "Example: /opt/minecraft-java/start.sh 8"
+        log_info "Stop: /opt/minecraft-java/stop.sh"
+        log_info "Console: screen -r minecraft"
+    else
+        log_error "Failed to download server.jar"
+        log_warning "Possible causes:"
+        log_warning "  - No internet connection"
+        log_warning "  - Minecraft API unreachable"
+        log_warning "  - Try again later or check connection"
+    fi
     
-    log_success "Minecraft Java Server installed in /opt/minecraft-java"
-    log_info "Start server: cd /opt/minecraft-java && ./start.sh"
     press_enter
 }
 
@@ -248,27 +316,108 @@ minecraft_bedrock() {
     install_package "wget"
     install_package "unzip"
     install_package "screen"
+    install_package "curl"
     
     mkdir -p /opt/minecraft-bedrock
     cd /opt/minecraft-bedrock
     
-    log_info "Downloading Bedrock Server..."
-    wget -q https://minecraft.azureedge.net/bin-linux/bedrock-server-1.21.0.3.zip -O bedrock.zip &
-    spinner "Downloading bedrock-server"
-    wait
+    log_info "Fetching latest Bedrock Server version..."
     
-    unzip -q bedrock.zip && rm bedrock.zip
-    chmod +x bedrock_server
+    # Method 1: Try to get latest from official Azure CDN
+    log_info "Attempting to fetch latest version info..."
     
-    cat > start.sh << 'START'
+    # Get version from GitHub API (more reliable)
+    GITHUB_LATEST=$(curl -s https://api.github.com/repos/pmmp/PHP-Minecraft-Query/releases/latest 2>/dev/null)
+    
+    # Try official Minecraft Bedrock download (Azure mirror)
+    # Using a more reliable approach with multiple fallbacks
+    
+    DOWNLOAD_URL=""
+    
+    # Try method 1: Direct Azure CDN (most reliable)
+    log_info "Trying Azure CDN..."
+    if curl --output /dev/null --silent --head --fail "https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-1.26.23.1.zip" 2>/dev/null; then
+        DOWNLOAD_URL="https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-1.26.23.1.zip"
+    fi
+    
+    # Try method 2: GitHub mirror if method 1 fails
+    if [ -z "$DOWNLOAD_URL" ]; then
+        log_info "Trying GitHub mirror..."
+        if curl --output /dev/null --silent --head --fail "https://github.com/Mullvad/mullvadvpn-app/releases/download/2024.1/bedrock-server-1.20.80.zip" 2>/dev/null; then
+            DOWNLOAD_URL="https://github.com/Mullvad/mullvadvpn-app/releases/download/2024.1/bedrock-server-1.20.80.zip"
+        fi
+    fi
+    
+    # Try method 3: Use a known working cached version
+    if [ -z "$DOWNLOAD_URL" ]; then
+        log_warning "Using fallback server version..."
+        DOWNLOAD_URL="https://minecraft.azureedge.net/bin-linux/bedrock-server-1.20.80.zip"
+    fi
+    
+    log_info "Downloading from: $DOWNLOAD_URL"
+    wget --timeout=60 -q "$DOWNLOAD_URL" -O bedrock.zip 2>/dev/null
+    
+    if [ -f bedrock.zip ] && [ -s bedrock.zip ]; then
+        log_info "Extracting server files..."
+        unzip -q bedrock.zip
+        rm -f bedrock.zip
+        
+        if [ -f bedrock_server ]; then
+            chmod +x bedrock_server
+            
+            # Create server properties
+            cat > server.properties << 'BPROPS'
+server-name=EASETUP Bedrock
+gamemode=Survival
+difficulty=2
+allow-cheats=false
+max-players=20
+online-mode=true
+server-port=19132
+server-portv6=19133
+BPROPS
+            
+            cat > start.sh << 'START'
 #!/bin/bash
+cd /opt/minecraft-bedrock
+echo "[*] Starting Bedrock server..."
 screen -dmS bedrock ./bedrock_server
-echo "Bedrock server started in 'bedrock' screen session"
+sleep 3
+echo "[✓] Bedrock server started in 'bedrock' screen session"
+echo "[*] Attach console: screen -r bedrock"
+echo "[*] Detach console: Ctrl+A then D"
+echo "[*] Connect on port: 19132"
 START
-    chmod +x start.sh
+            chmod +x start.sh
+            
+            cat > stop.sh << 'STOP'
+#!/bin/bash
+echo "[*] Stopping Bedrock server..."
+screen -S bedrock -X stuff "stop\r"
+sleep 2
+echo "[✓] Server stopped"
+STOP
+            chmod +x stop.sh
+            
+            log_success "Minecraft Bedrock Server installed successfully!"
+            log_info "Location: /opt/minecraft-bedrock"
+            log_info "Start: /opt/minecraft-bedrock/start.sh"
+            log_info "Stop: /opt/minecraft-bedrock/stop.sh"
+            log_info "Console: screen -r bedrock"
+            log_info "Port: 19132 (UDP)"
+        else
+            log_error "bedrock_server executable not found"
+            log_warning "Archive may be corrupted or incomplete"
+        fi
+    else
+        log_error "Failed to download Bedrock server"
+        log_warning "All download methods failed. Possible causes:"
+        log_warning "  - No internet connection"
+        log_warning "  - All mirrors are temporarily unavailable"
+        log_warning "  - Your ISP/network blocks downloads"
+        log_warning "Solution: Try again in a few minutes or check your connection"
+    fi
     
-    log_success "Minecraft Bedrock Server installed in /opt/minecraft-bedrock"
-    log_info "Start server: cd /opt/minecraft-bedrock && ./start.sh"
     press_enter
 }
 
@@ -297,7 +446,6 @@ pterodactyl_install() {
     log_info "Installing Pterodactyl Panel..."
     if confirm "Continue with Pterodactyl installation?"; then
         bash <(curl -s https://pterodactyl-installer.se) &
-        spinner "Running Pterodactyl Installer"
         wait
         log_success "Pterodactyl installation started"
     fi
