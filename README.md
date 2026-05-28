@@ -50,7 +50,7 @@ curl -s https://raw.githubusercontent.com/Dikatoki969/EASETUP-TOOLS/main/install
 
 * Ubuntu 20.04+
 * Ubuntu 22.04+
-* Debian 11+
+* Debian 10+
 * Debian 12+
 
 ---
@@ -110,6 +110,7 @@ curl -s https://raw.githubusercontent.com/Dikatoki969/EASETUP-TOOLS/main/install
 ---
 
 # 📸 SCREENSHOT
+![image]("./Screenshot 2026-05-28 135421.png")
 
 ```text
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
