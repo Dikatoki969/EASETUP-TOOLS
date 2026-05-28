@@ -105,14 +105,16 @@ spinner() {
 
 press_enter() {
     echo ""
-    read -p "$(echo -e ${NEON_CYAN}Press ENTER to continue...${NC})" 
+    echo -ne "${NEON_CYAN}Press ENTER to continue...${NC}"
+    read
     echo ""
 }
 
 confirm() {
     local prompt="$1"
     local response
-    read -p "$(echo -e ${NEON_CYAN}${prompt}${NC} (y/n):)" response
+    echo -ne "${NEON_CYAN}${prompt}${NC} (y/n): "
+    read response
     [[ "$response" =~ ^[Yy]$ ]]
 }
 
