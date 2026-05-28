@@ -187,7 +187,7 @@ show_banner() {
     cat << "EOF"
 ╔════════════════════════════════════════════════════════════╗
 ║                                                            ║
-║      ◆ EASETUP TOOLS - Enterprise Server Installer ◆      ║
+║       ◆ EASETUP TOOLS - Enterprise Server Installer ◆      ║
 ║                   VPS Management Tools                     ║
 ║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
