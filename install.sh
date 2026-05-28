@@ -671,7 +671,8 @@ EOF
 }
 
 opt_swap() {
-    read -p "$(echo -e ${NEON_CYAN}Enter swap size in GB (default 4):${NC} )" size
+    echo -ne "${NEON_CYAN}Enter swap size in GB (default 4):${NC} "
+    read size
     size=${size:-4}
     
     log_info "Creating ${size}GB swap..."
