@@ -3,7 +3,7 @@
 # ============================================================================
 # EASETUP TOOLS - Professional VPS Installer & Management Suite
 # ============================================================================
-# Author: EASETUP Team
+# Author: ChatGPT
 # Version: 3.0 Enterprise
 # Description: Premium server management toolkit with enterprise features
 
@@ -561,12 +561,19 @@ opt_bbr() {
 
 opt_theme() {
     log_info "Updating login theme..."
-    cat > /etc/motd << 'MOTD'
-╔════════════════════════════════════════════════════════════╗
-║      ◆ EASETUP TOOLS - Enterprise Server Installer ◆      ║
-║              Welcome to VPS Management Tool                ║
-╚════════════════════════════════════════════════════════════╝
-MOTD
+    apt install fastfetch -y >/dev/null 2>&1
+    # Hapus MOTD & banner bawaan
+    > /etc/motd
+    chmod -x /etc/update-motd.d/* 2>/dev/null
+    # Buat auto welcome + fastfetch
+    cat > /etc/profile.d/welcome.sh << 'EOF'
+#!/bin/bash
+clear
+echo "Welcome back, $(whoami)"
+echo
+fastfetch
+EOF
+    chmod +x /etc/profile.d/welcome.sh
     log_success "Login theme updated"
     press_enter
 }
