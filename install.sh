@@ -4,7 +4,7 @@
 # EASETUP TOOLS - VPS Installer & Management Suite
 # ============================================================================
 # Author: ChatGPT
-# Version: 1.4 Enterprise
+# Version: 1.4
 # Description: Server management toolkit with enterprise features
 
 set -o pipefail
@@ -156,7 +156,7 @@ install_package() {
     if [[ $(check_package "$package") == "0" ]]; then
         apt-get update -qq > /dev/null 2>&1
         apt-get install -y "$package" > /dev/null 2>&1 &
-        spinner "Installing $package"
+        spinner "Installing $package, Dont panic if looks stuck"
         wait
     fi
 }
