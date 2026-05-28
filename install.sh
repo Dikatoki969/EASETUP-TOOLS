@@ -1,11 +1,11 @@
 #!/bin/bash
 
 # ============================================================================
-# EASETUP TOOLS - Professional VPS Installer & Management Suite
+# EASETUP TOOLS - VPS Installer & Management Suite
 # ============================================================================
-# Author: EASETUP Team
-# Version: 3.0 Enterprise
-# Description: Premium server management toolkit with enterprise features
+# Author: ChatGPT
+# Version: 1.4 Enterprise
+# Description: Server management toolkit with enterprise features
 
 set -o pipefail
 
