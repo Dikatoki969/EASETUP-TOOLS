@@ -309,8 +309,7 @@ STOP
         log_warning "  - Minecraft API unreachable"
         log_warning "  - Try again later or check connection"
     fi
-    
-    press_enter
+
 }
 
 minecraft_bedrock() {
@@ -337,7 +336,7 @@ minecraft_bedrock() {
     DOWNLOAD_URL=""
     
     # Try method 1: Direct Azure CDN (most reliable)
-    log_info "Trying Azure CDN..."
+    log_info "Trying Mojang..."
     if curl --output /dev/null --silent --head --fail "https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-1.26.23.1.zip" 2>/dev/null; then
         DOWNLOAD_URL="https://www.minecraft.net/bedrockdedicatedserver/bin-linux/bedrock-server-1.26.23.1.zip"
     fi
@@ -420,7 +419,6 @@ STOP
         log_warning "Solution: Try again in a few minutes or check your connection"
     fi
     
-    press_enter
 }
 
 minecraft_menu() {
@@ -451,7 +449,6 @@ pterodactyl_install() {
         wait
         log_success "Pterodactyl installation started"
     fi
-    press_enter
 }
 
 nginx_install() {
@@ -464,7 +461,6 @@ nginx_install() {
     log_success "Nginx installed and running"
     log_info "Configuration: /etc/nginx/nginx.conf"
     log_info "Web root: /var/www/html"
-    press_enter
 }
 
 ssl_setup() {
@@ -473,7 +469,6 @@ ssl_setup() {
     install_package "python3-certbot-nginx"
     log_success "Certbot installed"
     log_info "Usage: certbot certonly --nginx -d yourdomain.com"
-    press_enter
 }
 
 ddos_protection() {
@@ -495,7 +490,6 @@ ddos_protection() {
     
     log_success "DDoS protection enabled"
     log_info "Fail2Ban rules available in /etc/fail2ban/"
-    press_enter
 }
 
 dashboard_install() {
@@ -600,11 +594,9 @@ CSSEOF
     chmod -R 755 /var/www/html/dashboard
     
     systemctl restart nginx > /dev/null 2>&1 &
-    spinner "Starting Dashboard"
     wait
     
     log_success "Dashboard installed at http://localhost/dashboard"
-    press_enter
 }
 
 hosting_menu() {
@@ -650,7 +642,6 @@ opt_update() {
     wait
     apt-get autoremove -y > /dev/null 2>&1
     log_success "System updated successfully"
-    press_enter
 }
 
 opt_sysctl() {
@@ -667,7 +658,6 @@ EOF
     spinner "Applying sysctl optimizations"
     wait
     log_success "Sysctl optimization complete"
-    press_enter
 }
 
 opt_swap() {
@@ -864,7 +854,6 @@ sec_firewall() {
     
     log_success "Firewall configured"
     ufw status
-    press_enter
 }
 
 sec_fail2ban() {
@@ -877,7 +866,6 @@ sec_fail2ban() {
     wait
     
     log_success "Fail2Ban installed and running"
-    press_enter
 }
 
 sec_ssh() {
@@ -893,7 +881,6 @@ sec_ssh() {
     wait
     
     log_success "SSH hardened"
-    press_enter
 }
 
 sec_clamav() {
@@ -907,7 +894,6 @@ sec_clamav() {
     
     log_success "ClamAV installed"
     log_info "Scan: clamscan -r /"
-    press_enter
 }
 
 sec_audit() {
@@ -926,7 +912,6 @@ sec_audit() {
     grep "Failed password" /var/log/auth.log 2>/dev/null | wc -l | xargs echo "Failed attempts:"
     
     echo ""
-    press_enter
 }
 
 sec_menu() {
@@ -981,7 +966,6 @@ inst_docker() {
     
     log_success "Docker installed"
     docker --version
-    press_enter
 }
 
 inst_nodejs() {
@@ -994,7 +978,6 @@ inst_nodejs() {
     log_success "Node.js installed"
     node --version
     npm --version
-    press_enter
 }
 
 inst_python() {
@@ -1005,7 +988,6 @@ inst_python() {
     
     log_success "Python installed"
     python3 --version
-    press_enter
 }
 
 inst_nginx() {
@@ -1018,7 +1000,6 @@ inst_nginx() {
     
     log_success "Nginx installed"
     nginx -v
-    press_enter
 }
 
 inst_mysql() {
@@ -1032,7 +1013,6 @@ inst_mysql() {
     
     log_success "MySQL installed"
     mysql --version
-    press_enter
 }
 
 inst_postgres() {
@@ -1046,7 +1026,6 @@ inst_postgres() {
     
     log_success "PostgreSQL installed"
     psql --version
-    press_enter
 }
 
 inst_menu() {
