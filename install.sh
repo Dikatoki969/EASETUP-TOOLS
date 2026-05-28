@@ -112,7 +112,7 @@ press_enter() {
 confirm() {
     local prompt="$1"
     local response
-    read -p "$(echo -e ${NEON_CYAN}${prompt}${NC} (y/n): )" response
+    read -p "$(echo -e ${NEON_CYAN}${prompt}${NC} (y/n):)" response
     [[ "$response" =~ ^[Yy]$ ]]
 }
 
